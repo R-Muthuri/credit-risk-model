@@ -15,11 +15,6 @@ from model import (build_model, assess_client, ORDINAL_MAPPINGS, LGD)
 # ══════════════════════════════════════════════════════════════
 #  PAGE CONFIG
 # ══════════════════════════════════════════════════════════════
-import os
-st.write("Working directory:", os.getcwd())
-st.write("Files in root:", os.listdir('.'))
-st.write("Files in data/:", os.listdir('data') if os.path.exists('data') else "data folder NOT FOUND")
-
 st.set_page_config(
     page_title="Credit Risk Model",
     page_icon="🏦",
