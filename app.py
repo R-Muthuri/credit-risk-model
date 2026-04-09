@@ -298,6 +298,8 @@ elif page == " Predict New Client":
 # ══════════════════════════════════════════════════════════════
 #  PAGE 3 — EDA & VISUALS
 # ══════════════════════════════════════════════════════════════
+elif page == " EDA & Visuals":
+
     st.title(" Exploratory Data Analysis")
     st.markdown("Visual summary of the German Credit Dataset.")
     st.markdown("---")
