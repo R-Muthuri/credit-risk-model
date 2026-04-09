@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score, roc_curve, confusion_matrix, ConfusionMatrixDisplay
-from model import (build_model, assess_client, ORDINAL_MAPPINGS, LGD)
+from model import build_model, assess_client, ORDINAL_MAPPINGS, LGD, DATA_PATH
 
 # ══════════════════════════════════════════════════════════════
 #  PAGE CONFIG
