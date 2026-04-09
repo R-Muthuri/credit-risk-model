@@ -12,7 +12,7 @@ import os
 
 # Absolute path to the data file — works locally and on Streamlit Cloud
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, 'data', 'german_credit_data.csv')
+DATA_PATH = os.path.join(BASE_DIR, 'german_credit_data.csv')
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
