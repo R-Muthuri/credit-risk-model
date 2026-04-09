@@ -301,108 +301,115 @@ elif page == " Predict New Client":
 elif page == "📈 EDA & Visuals":
 
     st.title("📈 Exploratory Data Analysis")
-    st.markdown("Visual summary of the German Credit Dataset used to train the model.")
+    st.markdown("Visual summary of the German Credit Dataset.")
     st.markdown("---")
 
-    # Load raw data for EDA
     df_eda = pd.read_csv(DATA_PATH)
 
-    # ── Target Distribution
-    st.subheader("Target Distribution")
+    # ── 1. Target Distribution
+    st.subheader("1. Target Distribution")
+    counts = df_eda['target'].value_counts()
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    df_eda['target'].value_counts().plot(kind='bar', ax=axes[0],
-        color=['#2ecc71','#e74c3c'], edgecolor='white', width=0.5)
+    axes[0].bar(counts.index, counts.values,
+                color=['#2ecc71','#e74c3c'], edgecolor='white', width=0.4)
     axes[0].set_title('Loan Outcome Count', fontweight='bold')
-    axes[0].set_xlabel('Target')
     axes[0].set_ylabel('Count')
-    axes[0].tick_params(axis='x', rotation=0)
+    for i, v in enumerate(counts.values):
+        axes[0].text(i, v + 5, str(v), ha='center', fontweight='bold')
     axes[0].spines['top'].set_visible(False)
     axes[0].spines['right'].set_visible(False)
-    df_eda['target'].value_counts().plot(kind='pie', ax=axes[1],
-        colors=['#2ecc71','#e74c3c'], autopct='%1.1f%%', startangle=90)
-    axes[1].set_ylabel('')
+    axes[1].pie(counts.values, labels=counts.index,
+                colors=['#2ecc71','#e74c3c'],
+                autopct='%1.1f%%', startangle=90)
     axes[1].set_title('Loan Outcome Proportion', fontweight='bold')
     plt.tight_layout()
     st.pyplot(fig)
-    plt.close()
-    st.caption("Figure 1 — 700 good borrowers vs 300 defaulters (70/30 split)")
+    plt.close(fig)
+    st.caption("700 good borrowers vs 300 defaulters — 70/30 class imbalance")
 
     st.markdown("---")
 
-    # ── Numeric Distributions
-    st.subheader("Numeric Feature Distributions")
-    numeric_cols_eda = ['age', 'credit_amount', 'month_duration',
-                        'payment_to_income_ratio', 'n_credits', 'n_guarantors']
+    # ── 2. Numeric Distributions
+    st.subheader("2. Numeric Feature Distributions")
+    num_cols = ['age', 'credit_amount', 'month_duration',
+                'payment_to_income_ratio', 'n_credits', 'n_guarantors']
     fig, axes = plt.subplots(2, 3, figsize=(14, 7))
     axes = axes.flatten()
-    for i, col in enumerate(numeric_cols_eda):
+    for i, col in enumerate(num_cols):
         axes[i].hist(df_eda[col], bins=30, color='#3498db',
-                     edgecolor='white', alpha=0.8)
-        axes[i].axvline(df_eda[col].mean(), color='red',
-                        linestyle='--', lw=1.5,
-                        label='Mean: ' + str(round(df_eda[col].mean(), 1)))
+                     edgecolor='white', alpha=0.85)
+        mean_val = df_eda[col].mean()
+        axes[i].axvline(mean_val, color='red', linestyle='--',
+                        lw=1.5, label='Mean: ' + str(round(mean_val, 1)))
         axes[i].set_title(col, fontweight='bold')
         axes[i].set_ylabel('Count')
         axes[i].legend(fontsize=8)
         axes[i].spines['top'].set_visible(False)
         axes[i].spines['right'].set_visible(False)
+    plt.suptitle('Distribution of Numeric Features', fontweight='bold', y=1.01)
     plt.tight_layout()
     st.pyplot(fig)
-    plt.close()
-    st.caption("Figure 2 — Distribution of all numeric features with mean markers")
+    plt.close(fig)
+    st.caption("Right-skewed credit amounts and age distributions typical of microfinance")
 
     st.markdown("---")
 
-    # ── Default Rate by Categorical Feature
-    st.subheader("Default Rate by Categorical Feature")
-    cat_cols_eda = ['status_account', 'credit_history',
-                    'purpose', 'housing', 'years_employment']
+    # ── 3. Default Rate by Category
+    st.subheader("3. Default Rate by Categorical Feature")
+    cat_cols = ['status_account', 'credit_history',
+                'purpose', 'housing', 'years_employment']
     fig, axes = plt.subplots(2, 3, figsize=(16, 10))
     axes = axes.flatten()
-    for i, col in enumerate(cat_cols_eda):
-        default_rate = df_eda.groupby(col)['target'].apply(
+    for i, col in enumerate(cat_cols):
+        rate = df_eda.groupby(col)['target'].apply(
             lambda x: (x == 'bad').mean() * 100
         ).sort_values(ascending=True)
-        colors = ['#e74c3c' if v >= 30 else '#3498db'
-                  for v in default_rate.values]
-        default_rate.plot(kind='barh', ax=axes[i],
-                          color=colors, alpha=0.8, edgecolor='white')
-        axes[i].set_title('Default Rate by ' + col, fontweight='bold')
-        axes[i].set_xlabel('Default Rate (%)')
+        colors = ['#e74c3c' if v >= 30 else '#3498db' for v in rate.values]
+        axes[i].barh(rate.index, rate.values,
+                     color=colors, edgecolor='white', height=0.6)
         axes[i].axvline(30, color='black', linestyle='--',
                         lw=1.2, label='Avg 30%')
+        axes[i].set_title('Default Rate by ' + col, fontweight='bold')
+        axes[i].set_xlabel('Default Rate (%)')
         axes[i].legend(fontsize=8)
         axes[i].spines['top'].set_visible(False)
         axes[i].spines['right'].set_visible(False)
     axes[5].axis('off')
     plt.tight_layout()
     st.pyplot(fig)
-    plt.close()
-    st.caption("Figure 3 — Red bars exceed the 30% average default rate")
+    plt.close(fig)
+    st.caption("Red bars exceed the 30% average — these categories carry above-average default risk")
 
     st.markdown("---")
 
-    # ── Boxplots
-    st.subheader("Age & Credit Amount vs Default")
+    # ── 4. Boxplots
+    st.subheader("4. Age & Credit Amount vs Default")
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    df_eda.boxplot(column='age', by='target', ax=axes[0],
-                   boxprops=dict(color='#2c3e50'),
-                   medianprops=dict(color='red', lw=2))
+    good = df_eda[df_eda['target'] == 'good']
+    bad  = df_eda[df_eda['target'] == 'bad']
+    axes[0].boxplot([good['age'].values, bad['age'].values],
+                    labels=['Good', 'Default'],
+                    boxprops=dict(color='#2c3e50'),
+                    medianprops=dict(color='red', lw=2),
+                    patch_artist=True,
+                    )
     axes[0].set_title('Age by Loan Outcome', fontweight='bold')
-    axes[0].set_xlabel('Outcome')
     axes[0].set_ylabel('Age')
-    df_eda.boxplot(column='credit_amount', by='target', ax=axes[1],
-                   boxprops=dict(color='#2c3e50'),
-                   medianprops=dict(color='red', lw=2))
+    axes[0].spines['top'].set_visible(False)
+    axes[0].spines['right'].set_visible(False)
+    axes[1].boxplot([good['credit_amount'].values, bad['credit_amount'].values],
+                    labels=['Good', 'Default'],
+                    boxprops=dict(color='#2c3e50'),
+                    medianprops=dict(color='red', lw=2),
+                    patch_artist=True)
     axes[1].set_title('Credit Amount by Loan Outcome', fontweight='bold')
-    axes[1].set_xlabel('Outcome')
     axes[1].set_ylabel('Credit Amount (DM)')
-    plt.suptitle('')
+    axes[1].spines['top'].set_visible(False)
+    axes[1].spines['right'].set_visible(False)
     plt.tight_layout()
     st.pyplot(fig)
-    plt.close()
-    st.caption("Figure 4 — Defaulters tend to be younger and borrow larger amounts")
-
+    plt.close(fig)
+    st.caption("Defaulters tend to be younger and borrow larger amounts on average")
 
 # ══════════════════════════════════════════════════════════════
 #  PAGE 4 — PORTFOLIO ANALYSIS
@@ -413,11 +420,9 @@ elif page == "💰 Portfolio Analysis":
     st.markdown("Expected Loss calculated on the 250-row test set using **EL = PD × LGD × EAD**")
     st.markdown("---")
 
-    # Rebuild EL table from test set
-    from model import DATA_PATH
     df_raw = pd.read_csv(DATA_PATH)
-    EAD     = df_raw.loc[y_test.index, 'credit_amount'].values
-    EL      = y_prob * LGD * EAD
+    EAD    = df_raw.loc[y_test.index, 'credit_amount'].values
+    EL     = y_prob * LGD * EAD
 
     el_df = pd.DataFrame({
         'PD'            : (y_prob * 100).round(2),
@@ -431,20 +436,66 @@ elif page == "💰 Portfolio Analysis":
 
     # ── KPI row
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Total Exposure (EAD)",  f"DM {EAD.sum():,.0f}")
-    c2.metric("Total Expected Loss",   f"DM {EL.sum():,.0f}")
-    c3.metric("Portfolio EL Rate",     f"{(EL.sum()/EAD.sum()*100):.2f}%")
-    c4.metric("Average PD",            f"{(y_prob.mean()*100):.2f}%")
+    c1.metric("Total Exposure (EAD)",  "DM " + f"{EAD.sum():,.0f}")
+    c2.metric("Total Expected Loss",   "DM " + f"{EL.sum():,.0f}")
+    c3.metric("Portfolio EL Rate",     str(round(EL.sum()/EAD.sum()*100, 2)) + "%")
+    c4.metric("Average PD",            str(round(y_prob.mean()*100, 2)) + "%")
 
     st.markdown("---")
 
     # ── EL charts
-    st.image("outputs/eval_7_3_expected_loss.png", use_column_width=True)
-    st.caption("Figure 5 — Expected Loss by risk band, EL vs loan amount, PD distribution")
+    st.subheader("Expected Loss Visualisations")
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+    # Chart 1 — EL by Risk Band
+    band_el = el_df.groupby('Risk_Band', observed=True)['Expected_Loss'].sum()
+    colors  = ['#2ecc71','#3498db','#f39c12','#e67e22','#e74c3c']
+    bars = axes[0].bar(band_el.index, band_el.values,
+                       color=colors, edgecolor='white', width=0.6)
+    axes[0].set_title('Total EL by Risk Band', fontweight='bold')
+    axes[0].set_xlabel('Risk Band')
+    axes[0].set_ylabel('Expected Loss (DM)')
+    axes[0].tick_params(axis='x', rotation=30)
+    for bar in bars:
+        axes[0].text(bar.get_x() + bar.get_width()/2,
+                     bar.get_height() + 200,
+                     'DM ' + f'{bar.get_height():,.0f}',
+                     ha='center', fontsize=7, fontweight='bold')
+    axes[0].spines['top'].set_visible(False)
+    axes[0].spines['right'].set_visible(False)
+
+    # Chart 2 — EL vs Loan Amount
+    scatter_c = ['#e74c3c' if d == 1 else '#2ecc71'
+                 for d in el_df['Actual_Default']]
+    axes[1].scatter(EAD, EL, c=scatter_c, alpha=0.5, s=25, edgecolors='none')
+    axes[1].set_title('Expected Loss vs Loan Amount', fontweight='bold')
+    axes[1].set_xlabel('Loan Amount / EAD (DM)')
+    axes[1].set_ylabel('Expected Loss (DM)')
+    axes[1].spines['top'].set_visible(False)
+    axes[1].spines['right'].set_visible(False)
+
+    # Chart 3 — PD Distribution
+    axes[2].hist(y_prob[y_test == 0], bins=25, alpha=0.65,
+                 color='#2ecc71', label='Good', edgecolor='white')
+    axes[2].hist(y_prob[y_test == 1], bins=25, alpha=0.65,
+                 color='#e74c3c', label='Default', edgecolor='white')
+    axes[2].axvline(0.5, color='black', linestyle='--',
+                    lw=1.5, label='Threshold 0.5')
+    axes[2].set_title('PD Distribution by Actual Outcome', fontweight='bold')
+    axes[2].set_xlabel('Predicted PD')
+    axes[2].set_ylabel('Count')
+    axes[2].legend(fontsize=9)
+    axes[2].spines['top'].set_visible(False)
+    axes[2].spines['right'].set_visible(False)
+
+    plt.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
     st.markdown("---")
-    st.subheader("Risk Band Breakdown")
 
+    # ── Risk Band Table
+    st.subheader("Risk Band Breakdown")
     summary = el_df.groupby('Risk_Band', observed=True).agg(
         Borrowers       = ('PD',            'count'),
         Avg_PD          = ('PD',            'mean'),
@@ -452,21 +503,22 @@ elif page == "💰 Portfolio Analysis":
         Total_EL        = ('Expected_Loss', 'sum'),
         Actual_Defaults = ('Actual_Default','sum')
     ).reset_index()
-
-    summary['Avg_PD']   = summary['Avg_PD'].apply(lambda x: f"{x:.1f}%")
-    summary['Total_EAD']= summary['Total_EAD'].apply(lambda x: f"DM {x:,.0f}")
-    summary['Total_EL'] = summary['Total_EL'].apply(lambda x: f"DM {x:,.0f}")
-
+    summary['Avg_PD']    = summary['Avg_PD'].apply(lambda x: str(round(x, 1)) + '%')
+    summary['Total_EAD'] = summary['Total_EAD'].apply(lambda x: 'DM ' + f'{x:,.0f}')
+    summary['Total_EL']  = summary['Total_EL'].apply(lambda x: 'DM ' + f'{x:,.0f}')
     st.dataframe(summary, use_container_width=True, hide_index=True)
 
     st.markdown("---")
+
+    # ── Full borrower table
     st.subheader("Full Borrower-Level EL Table")
     st.dataframe(
         el_df.rename(columns={
-            'PD': 'PD (%)', 'EAD': 'Loan Amount (DM)',
-            'Expected_Loss': 'Expected Loss (DM)',
+            'PD'            : 'PD (%)',
+            'EAD'           : 'Loan Amount (DM)',
+            'Expected_Loss' : 'Expected Loss (DM)',
             'Actual_Default': 'Actual Default',
-            'Risk_Band': 'Risk Band'
+            'Risk_Band'     : 'Risk Band'
         }),
         use_container_width=True,
         hide_index=True
