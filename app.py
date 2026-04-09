@@ -26,7 +26,7 @@ st.set_page_config(
 # ══════════════════════════════════════════════════════════════
 @st.cache_resource
 def load_model():
-    return build_model('data/german_credit_data.csv')
+    return build_model()
 
 lr, scaler, X_train, X_test, y_test = load_model()
 y_prob = lr.predict_proba(X_test)[:, 1]
@@ -42,10 +42,10 @@ st.sidebar.markdown("---")
 
 page = st.sidebar.radio(
     "Navigate",
-    ["📊 Model Overview",
-     "🔍 Predict New Client",
-     "📈 EDA & Visuals",
-     "💰 Portfolio Analysis"]
+    [" Model Overview",
+     " Predict New Client",
+     " EDA & Visuals",
+     " Portfolio Analysis"]
 )
 
 st.sidebar.markdown("---")
@@ -59,9 +59,9 @@ st.sidebar.metric("Features",      "37")
 # ══════════════════════════════════════════════════════════════
 #  PAGE 1 — MODEL OVERVIEW
 # ══════════════════════════════════════════════════════════════
-if page == "📊 Model Overview":
+if page == " Model Overview":
 
-    st.title("🏦 Credit Risk — Probability of Default Model")
+    st.title(" Credit Risk — Probability of Default Model")
     st.markdown("Built on the **UCI German Credit Dataset** · 1,000 loan applications · Logistic Regression (C=0.1)")
     st.markdown("---")
 
@@ -134,9 +134,9 @@ if page == "📊 Model Overview":
 # ══════════════════════════════════════════════════════════════
 #  PAGE 2 — PREDICT NEW CLIENT
 # ══════════════════════════════════════════════════════════════
-elif page == "🔍 Predict New Client":
+elif page == " Predict New Client":
 
-    st.title("🔍 New Client Credit Assessment")
+    st.title(" New Client Credit Assessment")
     st.markdown("Fill in the applicant details below and click **Run Assessment**.")
     st.markdown("---")
 
@@ -214,7 +214,7 @@ elif page == "🔍 Predict New Client":
 
     st.markdown("---")
 
-    if st.button("🚀 Run Credit Assessment", use_container_width=True):
+    if st.button(" Run Credit Assessment", use_container_width=True):
 
         client = {
             'status_account'          : status_account,
@@ -298,9 +298,9 @@ elif page == "🔍 Predict New Client":
 # ══════════════════════════════════════════════════════════════
 #  PAGE 3 — EDA & VISUALS
 # ══════════════════════════════════════════════════════════════
-elif page == "📈 EDA & Visuals":
+elif page == " EDA & Visuals":
 
-    st.title("📈 Exploratory Data Analysis")
+    st.title(" Exploratory Data Analysis")
     st.markdown("Visual summary of the German Credit Dataset used to train the model.")
     st.markdown("---")
 
@@ -334,7 +334,8 @@ elif page == "💰 Portfolio Analysis":
     st.markdown("---")
 
     # Rebuild EL table from test set
-    df_raw  = pd.read_csv('data/german_credit_data.csv')
+    from model import DATA_PATH
+    df_raw = pd.read_csv(DATA_PATH)
     EAD     = df_raw.loc[y_test.index, 'credit_amount'].values
     EL      = y_prob * LGD * EAD
 
