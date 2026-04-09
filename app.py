@@ -298,29 +298,109 @@ elif page == " Predict New Client":
 # ══════════════════════════════════════════════════════════════
 #  PAGE 3 — EDA & VISUALS
 # ══════════════════════════════════════════════════════════════
-elif page == " EDA & Visuals":
+elif page == "📈 EDA & Visuals":
 
-    st.title(" Exploratory Data Analysis")
+    st.title("📈 Exploratory Data Analysis")
     st.markdown("Visual summary of the German Credit Dataset used to train the model.")
     st.markdown("---")
 
+    # Load raw data for EDA
+    df_eda = pd.read_csv(DATA_PATH)
+
+    # ── Target Distribution
     st.subheader("Target Distribution")
-    st.image("outputs/eda_3_1_target.png", use_column_width=True)
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+    df_eda['target'].value_counts().plot(kind='bar', ax=axes[0],
+        color=['#2ecc71','#e74c3c'], edgecolor='white', width=0.5)
+    axes[0].set_title('Loan Outcome Count', fontweight='bold')
+    axes[0].set_xlabel('Target')
+    axes[0].set_ylabel('Count')
+    axes[0].tick_params(axis='x', rotation=0)
+    axes[0].spines['top'].set_visible(False)
+    axes[0].spines['right'].set_visible(False)
+    df_eda['target'].value_counts().plot(kind='pie', ax=axes[1],
+        colors=['#2ecc71','#e74c3c'], autopct='%1.1f%%', startangle=90)
+    axes[1].set_ylabel('')
+    axes[1].set_title('Loan Outcome Proportion', fontweight='bold')
+    plt.tight_layout()
+    st.pyplot(fig)
+    plt.close()
     st.caption("Figure 1 — 700 good borrowers vs 300 defaulters (70/30 split)")
 
     st.markdown("---")
+
+    # ── Numeric Distributions
     st.subheader("Numeric Feature Distributions")
-    st.image("outputs/eda_3_2_numeric.png", use_column_width=True)
+    numeric_cols_eda = ['age', 'credit_amount', 'month_duration',
+                        'payment_to_income_ratio', 'n_credits', 'n_guarantors']
+    fig, axes = plt.subplots(2, 3, figsize=(14, 7))
+    axes = axes.flatten()
+    for i, col in enumerate(numeric_cols_eda):
+        axes[i].hist(df_eda[col], bins=30, color='#3498db',
+                     edgecolor='white', alpha=0.8)
+        axes[i].axvline(df_eda[col].mean(), color='red',
+                        linestyle='--', lw=1.5,
+                        label='Mean: ' + str(round(df_eda[col].mean(), 1)))
+        axes[i].set_title(col, fontweight='bold')
+        axes[i].set_ylabel('Count')
+        axes[i].legend(fontsize=8)
+        axes[i].spines['top'].set_visible(False)
+        axes[i].spines['right'].set_visible(False)
+    plt.tight_layout()
+    st.pyplot(fig)
+    plt.close()
     st.caption("Figure 2 — Distribution of all numeric features with mean markers")
 
     st.markdown("---")
+
+    # ── Default Rate by Categorical Feature
     st.subheader("Default Rate by Categorical Feature")
-    st.image("outputs/eda_3_3_categorical.png", use_column_width=True)
+    cat_cols_eda = ['status_account', 'credit_history',
+                    'purpose', 'housing', 'years_employment']
+    fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+    axes = axes.flatten()
+    for i, col in enumerate(cat_cols_eda):
+        default_rate = df_eda.groupby(col)['target'].apply(
+            lambda x: (x == 'bad').mean() * 100
+        ).sort_values(ascending=True)
+        colors = ['#e74c3c' if v >= 30 else '#3498db'
+                  for v in default_rate.values]
+        default_rate.plot(kind='barh', ax=axes[i],
+                          color=colors, alpha=0.8, edgecolor='white')
+        axes[i].set_title('Default Rate by ' + col, fontweight='bold')
+        axes[i].set_xlabel('Default Rate (%)')
+        axes[i].axvline(30, color='black', linestyle='--',
+                        lw=1.2, label='Avg 30%')
+        axes[i].legend(fontsize=8)
+        axes[i].spines['top'].set_visible(False)
+        axes[i].spines['right'].set_visible(False)
+    axes[5].axis('off')
+    plt.tight_layout()
+    st.pyplot(fig)
+    plt.close()
     st.caption("Figure 3 — Red bars exceed the 30% average default rate")
 
     st.markdown("---")
+
+    # ── Boxplots
     st.subheader("Age & Credit Amount vs Default")
-    st.image("outputs/eda_3_4_boxplots.png", use_column_width=True)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    df_eda.boxplot(column='age', by='target', ax=axes[0],
+                   boxprops=dict(color='#2c3e50'),
+                   medianprops=dict(color='red', lw=2))
+    axes[0].set_title('Age by Loan Outcome', fontweight='bold')
+    axes[0].set_xlabel('Outcome')
+    axes[0].set_ylabel('Age')
+    df_eda.boxplot(column='credit_amount', by='target', ax=axes[1],
+                   boxprops=dict(color='#2c3e50'),
+                   medianprops=dict(color='red', lw=2))
+    axes[1].set_title('Credit Amount by Loan Outcome', fontweight='bold')
+    axes[1].set_xlabel('Outcome')
+    axes[1].set_ylabel('Credit Amount (DM)')
+    plt.suptitle('')
+    plt.tight_layout()
+    st.pyplot(fig)
+    plt.close()
     st.caption("Figure 4 — Defaulters tend to be younger and borrow larger amounts")
 
 
