@@ -299,6 +299,28 @@ elif page == " Predict New Client":
 #  PAGE 3 — EDA & VISUALS
 # ══════════════════════════════════════════════════════════════
 elif page == "📈 EDA & Visuals":
+    st.title("📈 EDA Debug")
+    
+    try:
+        df_eda = pd.read_csv(DATA_PATH)
+        st.success("CSV loaded. Rows: " + str(len(df_eda)))
+        st.write("Columns:", df_eda.columns.tolist())
+        st.write("Sample target values:", df_eda['target'].unique().tolist())
+    except Exception as e:
+        st.error("CSV load failed: " + str(e))
+        st.stop()
+
+    try:
+        counts = df_eda['target'].value_counts()
+        st.write("Target counts:", counts.to_dict())
+        fig, ax = plt.subplots(figsize=(5, 3))
+        ax.bar(['good','bad'], [counts.get('good',0), counts.get('bad',0)],
+               color=['#2ecc71','#e74c3c'])
+        st.pyplot(fig)
+        plt.close(fig)
+        st.success("Chart rendered successfully")
+    except Exception as e:
+        st.error("Chart failed: " + str(e))
 
     st.title("📈 Exploratory Data Analysis")
     st.markdown("Visual summary of the German Credit Dataset.")
