@@ -8,7 +8,11 @@ Import this module in app.py or the notebook.
 import pandas as pd
 import numpy as np
 import warnings
-warnings.filterwarnings('ignore')
+import os
+
+# Absolute path to the data file — works locally and on Streamlit Cloud
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, 'data', 'german_credit_data.csv')
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -50,11 +54,9 @@ NUMERIC_COLS = [
 LGD = 0.45   # Basel II unsecured retail standard
 
 
-def build_model(data_path='data/german_credit_data.csv'):
-    """
-    Load data, preprocess, train Logistic Regression.
-    Returns: model (lr), scaler, X_train columns, X_test, y_test
-    """
+def build_model(data_path=None):
+    if data_path is None:
+        data_path = DATA_PATH
     df = pd.read_csv(data_path)
     df['target'] = df['target'].map({'good': 0, 'bad': 1})
 
