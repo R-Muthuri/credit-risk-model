@@ -6,7 +6,7 @@ A full end-to-end credit risk modelling project built in Python, using the UCI G
 
 ## Live Dashboard
 
-> **[Launch Streamlit App →]()**
+> **[Launch Streamlit App →](https://credit-risk-model-xnv9dtqes3vhyrximrkmwr.streamlit.app/)**
 
 
 ---
@@ -100,8 +100,8 @@ This model architecture is directly applicable to:
 
 ## Author
 
-**[Raphael Muthuri Nteere]**
-- LinkedIn: [linkedin.com/in/raphael-nteere-3b2284274]
+**Raphael Muthuri Nteere**
+- LinkedIn:[(https://www.linkedin.com/in/raphael-nteere-3b2284274/?skipRedirect=true)]
 - Email: [nteerejoshua9@gmail.com]
 
 ---
