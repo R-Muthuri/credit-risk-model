@@ -1,17 +1,17 @@
-# 🏦 Credit Risk Model — Probability of Default
+# Credit Risk Model — Probability of Default
 
 A full end-to-end credit risk modelling project built in Python, using the UCI German Credit Dataset. The model predicts the **Probability of Default (PD)** for individual loan applicants and calculates **Expected Loss** using the Basel II formula.
 
 ---
 
-## 📊 Live Dashboard
+## Live Dashboard
 
-> **[Launch Streamlit App →](https://your-app-name.streamlit.app)**
-> *(Replace this link after deploying to Streamlit Community Cloud)*
+> **[Launch Streamlit App →]()**
+
 
 ---
 
-## 🎯 Project Objectives
+## Project Objectives
 
 - Build a binary classification model to predict loan default (good vs bad)
 - Achieve an AUC-ROC score above **80%**
@@ -21,36 +21,8 @@ A full end-to-end credit risk modelling project built in Python, using the UCI G
 
 ---
 
-## 📁 Project Structure
 
-```
-credit-risk-model/
-│
-├── app.py                  ← Streamlit dashboard
-├── model.py                ← Preprocessing and model logic
-├── requirements.txt        ← Python dependencies
-├── README.md               ← This file
-│
-├── data/
-│   └── german_credit_data.csv
-│
-├── outputs/
-│   ├── eda_3_1_target.png
-│   ├── eda_3_2_numeric.png
-│   ├── eda_3_3_categorical.png
-│   ├── eda_3_4_boxplots.png
-│   ├── eval_7_1_roc.png
-│   ├── eval_7_2_confusion.png
-│   ├── eval_7_3_expected_loss.png
-│   └── eval_8_feature_importance.png
-│
-└── notebook/
-    └── credit_risk_model.ipynb
-```
-
----
-
-## 🔬 Methodology
+##  Methodology
 
 ### Dataset
 - **Source:** UCI Statlog German Credit Dataset
@@ -85,11 +57,11 @@ EAD = Exposure at Default       (loan amount in DM)
 
 ---
 
-## 📈 Key Results
+## Key Results
 
 | Metric | Value |
 |--------|-------|
-| Final Model AUC | **0.8101** ✅ |
+| Final Model AUC | **0.8101**  |
 | Portfolio Exposure (EAD) | DM 861,392 |
 | Total Expected Loss | DM 144,766 |
 | Portfolio EL Rate | 16.81% |
@@ -106,42 +78,9 @@ EAD = Exposure at Default       (loan amount in DM)
 
 ---
 
-## 🚀 Running Locally
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/credit-risk-model.git
-cd credit-risk-model
-```
 
-### 2. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Run the Streamlit dashboard
-```bash
-streamlit run app.py
-```
-
-### 4. Open in browser
-```
-http://localhost:8501
-```
-
----
-
-## 🌐 Deploying to Streamlit Community Cloud (Free)
-
-1. Push this repository to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Click **New app**
-4. Select your repository, branch (`main`), and set main file to `app.py`
-5. Click **Deploy** — live in ~2 minutes
-
----
-
-## 🏦 Business Applications
+## Business Applications
 
 This model architecture is directly applicable to:
 - **Kenyan fintechs** — Tala, Branch, M-KOPA, Lipa Later
@@ -151,7 +90,7 @@ This model architecture is directly applicable to:
 
 ---
 
-## 📚 Skills Demonstrated
+## Skills Demonstrated
 
 `Python` `pandas` `scikit-learn` `XGBoost` `Streamlit` `Logistic Regression`
 `Credit Risk` `Basel II` `Expected Loss` `AUC-ROC` `Feature Engineering`
@@ -159,14 +98,12 @@ This model architecture is directly applicable to:
 
 ---
 
-## 👤 Author
+## Author
 
-**[Your Name]**
-- LinkedIn: [your-linkedin]
-- Email: [your-email]
+**[Raphael Muthuri Nteere]**
+- LinkedIn: [linkedin.com/in/raphael-nteere-3b2284274]
+- Email: [nteerejoshua9@gmail.com]
 
 ---
 
-## 📄 License
 
-MIT License — free to use and adapt with attribution.
